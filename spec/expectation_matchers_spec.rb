@@ -80,4 +80,47 @@ describe 'Expectation Matchers' do
       expect(1..10).to cover(5)
     end
   end
+
+  describe 'collection matchers' do
+    it 'will match arrays' do
+      array = %w[a b c]
+
+      expect(array).to include('a')
+      expect(array).to include('b', 'c')
+
+      expect(array).to start_with('a')
+      expect(array).to end_with('c')
+
+      expect(array).to match_array(%w[b c a])
+      expect(array).not_to match_array(%w[b a])
+
+      expect(array).to contain_exactly('b', 'a', 'c') # smiliar to match_array but using individual args
+      expect(array).not_to contain_exactly('b', 'c')
+    end
+
+    it 'will match strings' do
+      string = 'Gap Intelligence'
+
+      expect(string).to include('ap Intel')
+      expect(string).to include('lli', 'Gap')
+
+      expect(string).to start_with('Ga')
+      expect(string).to end_with('gence')
+
+    end
+
+    it 'will match hashes' do
+      hash = { a: 1, b: 4, c: 5 }
+
+      expect(hash).to include(:a)
+      expect(hash).to include(a: 1)
+
+      expect(hash).to include(a: 1, b: 4)
+      expect(hash).to include(a: 1, c: 5, b: 4)
+
+      expect(hash).not_to include('a' => 1, 'c' => 5)
+    end
+  end
+
+
 end
