@@ -63,4 +63,21 @@ describe 'Expectation Matchers' do
       expect(0).not_to be(nil)     # nil is nil not 0 (zero)
     end
   end
+
+  describe 'numeric comparison matchers' do
+
+    it 'will match less/greater than' do
+      expect(5).to be > 3
+      expect(5).to be >= 5
+      expect(5).to be <= 5
+      expect(5).to be < 6
+    end
+
+    it 'will match numeric ranges' do
+      expect(5).to be_between(1, 5).inclusive
+      expect(5).not_to be_between(1, 5).exclusive
+      expect(5).to be_within(1).of(6)
+      expect(1..10).to cover(5)
+    end
+  end
 end
