@@ -122,5 +122,58 @@ describe 'Expectation Matchers' do
     end
   end
 
+  describe 'othe useful matchers' do
+    it 'will match strings with RegEx' do
+      str = 'I am more than Junior, nearly Middle'
+      expect(str).to match(/Junior(.+)Middle/)
+
+      expect('12345').to match(/\d{5}/)
+      expect(12_345).not_to match(/\d{5}/)
+
+      email = 'someone@domain.com'
+      expect(email).to match(/\A\w+@\w+\.\w{2,3}\Z/)
+    end
+
+    it 'will match object types' do
+      expect('IamMiddleDev').to be_instance_of(String)
+      expect('IamMiddleDev').to be_an_instance_of(String)
+
+      class MyString < String
+      end
+      my_str = MyString.new('test')
+      expect(my_str).to be_kind_of(String)
+      expect('test').not_to be_kind_of(MyString)
+
+      expect('IamMiddleDev').to be_a(String)
+      expect([1, 2, 3]).to be_an(Array)
+    end
+
+    it 'will match objects with respond_to' do
+      str = 'IamMiddleDev'
+      expect(str).to respond_to(:length)
+      expect(str).not_to respond_to(:sort)
+    end
+
+    it 'will match class instances with #have_attributes' do
+      class Person
+        attr_accessor :first_name, :last_name, :age
+      end
+      pn = Person.new
+      pn.first_name = 'Gal'
+      pn.last_name = 'Gadot'
+      pn.age = 33
+
+      expect(pn).to have_attributes(first_name: 'Gal')
+      expect(pn).to have_attributes(first_name: 'Gal', last_name: 'Gadot', age: 33)
+    end
+
+    it 'will match anything with #satisfy' do
+      # The most flexible matcher
+      expect(20).to satisfy do |value|
+        value > 10 && value <= 20 && value.even?
+      end
+    end
+
+  end
 
 end
