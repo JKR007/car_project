@@ -122,7 +122,7 @@ describe 'Expectation Matchers' do
     end
   end
 
-  describe 'othe useful matchers' do
+  describe 'other useful matchers' do
     it 'will match strings with RegEx' do
       str = 'I am more than Junior, nearly Middle'
       expect(str).to match(/Junior(.+)Middle/)
@@ -174,6 +174,45 @@ describe 'Expectation Matchers' do
       end
     end
 
+  end
+
+  describe 'predicate matchers' do
+    it 'will match be_* to custom methods ending in ?' do
+      # using built-in methods
+      expect([]).to be_empty        # [].empty?
+      expect(1).to be_integer       # 1.integer?
+      expect(0).to be_zero          # 0.zero?
+      expect(1).to be_nonzero       # 1.nonzero?
+      expect(1).to be_odd           # 1.odd?
+      expect(2).to be_even          # 2.even?
+
+      # using custom methods
+      class Product
+        def visible?
+          true
+        end
+      end
+      product = Product.new
+      expect(product).to be_visible  # product.visible?
+    end
+
+    it 'will march have_* to custom methods ending in has_?' do
+      # using built-in methods
+      hash = { a: 1, b: 2 }
+      expect(hash).to have_key(:a)   # hash.has_key?
+      expect(hash).to have_value(2)  # hash.has_value?
+
+      # using custom methods
+      class Product
+        def has_promo_code?
+          true
+        end
+      end
+
+      product = Product.new
+      expect(product).to have_promo_code
+      expect(product.has_promo_code?).to be true
+    end
   end
 
 end
