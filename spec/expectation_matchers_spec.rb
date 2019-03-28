@@ -215,4 +215,64 @@ describe 'Expectation Matchers' do
     end
   end
 
+  describe 'observation matchers' do
+    # Observation matchers format: expect{}
+
+    it 'will match when events change object attributes' do
+      # call the test before and after the block (check two times)
+      array = []
+      expect { array << 1 }.to change(array, :empty?).from(true).to(false)
+
+      class StepUp
+        attr_accessor :count
+        def initialize
+          @count = 0
+        end
+
+        def increment
+          @count += 1
+        end
+      end
+      step = StepUp.new
+      expect { step.increment }.to change(step, :count).from(0).to(1)
+
+
+    end
+
+    it 'will match when events change any values' do
+      num = 5
+      expect { num += 1 }.to change { num }.from(5).to(6)
+      expect { num += 1 }.to change { num }.by(1)
+      expect { num += 1 }.to change { num }.by_at_least(1)
+      expect { num += 1 }.to change { num }.by_at_most(1)
+
+      expect { num *= 2 }.to change { num%2 }.from(1).to(0)
+    end
+
+    it 'will match when errors raised' do
+      # Observation Errors
+
+      expect { raise StandardError }.to raise_error
+      expect { raise StandardError }.to raise_exception
+
+      expect { 1 / 0 }.to raise_error(ZeroDivisionError)
+      expect { 1 / 0 }.to raise_error.with_message('divided by 0')
+      expect { 1 / 0 }.to raise_error.with_message(/divided/)
+
+      # Note! The negative does not accept arguments
+      expect { 1 / 1 }.not_to raise_error
+
+    end
+
+    it 'will match when output is generated' do
+      # Observes output sent - to $stdout or $stderr
+
+      expect { print('Hello') }.to output.to_stdout
+      expect { print 'Hello' }.to output('Hello').to_stdout
+      expect { print 'Hello' }.to output(/ll/).to_stdout
+
+      expect { warn 'Problem' }.to output(/Problem/).to_stderr
+    end
+  end
+
 end
