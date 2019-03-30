@@ -236,7 +236,6 @@ describe 'Expectation Matchers' do
       step = StepUp.new
       expect { step.increment }.to change(step, :count).from(0).to(1)
 
-
     end
 
     it 'will match when events change any values' do
@@ -252,8 +251,8 @@ describe 'Expectation Matchers' do
     it 'will match when errors raised' do
       # Observation Errors
 
-      expect { raise StandardError }.to raise_error
-      expect { raise StandardError }.to raise_exception
+      expect { raise StandardError }.to raise_error.with_message('StandardError')
+      expect { raise StandardError }.to raise_exception.with_message('StandardError')
 
       expect { 1 / 0 }.to raise_error(ZeroDivisionError)
       expect { 1 / 0 }.to raise_error.with_message('divided by 0')
@@ -273,6 +272,51 @@ describe 'Expectation Matchers' do
 
       expect { warn 'Problem' }.to output(/Problem/).to_stderr
     end
+  end
+
+  describe 'compound expectations' do
+    it 'will match using: and, or, &, |' do
+      expect([1, 2, 3, 4]).to start_with(1).and end_with(4)
+      expect([1, 2, 3, 4]).to start_with(1) & include(3)
+
+      expect(10 * 2).to be_odd.or be < 100
+      array = %w[a b].shuffle
+      expect(array).to start_with('a') | end_with('a')
+    end
+  end
+
+  describe 'composing matchers' do
+    # from RSpec 3, some matchers accept matchers as arguments
+    it 'will match all collection elements using a matcher' do
+      array = [1, 3, 5]
+      expect(array).to all(be_odd)
+    end
+
+    it 'will match by sending matchers as arguments to matchers' do
+      string = 'Hello'
+      expect{ string = 'Goodbye' }.to change{ string}.from(match(/ll/)).to(match(/oo/))
+
+      hash = { a: 1, b: 2, c: 3 }
+      expect(hash).to include(a: be_odd, b: be_even, c: be_odd)
+      expect(hash).to include(a: be > 0, c: be_within(2).of(4))
+    end
+
+    it 'will match using non-phrase aliases for matchers' do
+      # Old version <=> RSpec 3
+      fruits = %w[apple banana water-melon]
+      expect(fruits).to start_with(start_with('a')) & include(a_string_matching(/b.n.n/)) & end_with(end_with('n'))
+
+      # Readability improved >= RSpec 3
+      expect(fruits).to start_with(a_string_starting_with('a')) & include(a_string_matching(/a.a.a/)) & end_with(a_string_ending_with('n'))
+
+      array = [0, 2, 4]
+      # Old version <=> RSpec 3
+      expect(array).to start_with(be < 1) | end_with(be_within(2).of(6) & be_even)
+      
+      # Readability improved >= RSpec 3
+      expect(array).to start_with(a_value = 2) | end_with(a_value_within(3).of(5))
+    end
+
   end
 
 end
