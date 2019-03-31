@@ -1,10 +1,13 @@
 require 'car'
 
-describe 'Car' do
+describe Car do
   describe 'attributes' do
+    # do not need to defince subject {  } explicitly
+    # if we use a #className after #describe
+
     # use "subject" instead of "let"
     # if variable of is subject of example
-    subject { Car.new }
+    # subject { Car.new }
 
     # let(:car) { Car.new }
     # lazy-execution and memoization
